@@ -60,7 +60,6 @@ const upload = multer({
 await mongoose.connect('mongodb+srv://8581priyanshu:Priyanshu%4012@cluster0.xy5w8.mongodb.net/flatfinder');
 
 
-
 // User Schema
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
