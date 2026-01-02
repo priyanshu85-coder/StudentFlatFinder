@@ -13,7 +13,9 @@ import adminRoutes from "./admin-routes.js";
 
 
 // Environment setup
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 console.log("JWT SECRET LOADED:", !!process.env.JWT_SECRET);
 
 console.log('MONGO_URI:', process.env.MONGO_URI);
@@ -184,7 +186,7 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ message: 'Access token required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret', (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET , (err, user) => {
     if (err) {
       return res.status(403).json({ message: 'Invalid token' });
     }
