@@ -100,15 +100,13 @@ const Home = () => {
                       <Search className="h-5 w-5 mr-2" />
                       Find Flats Now
                     </Link>
-                    <a
-                      href="/register"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-transform duration-300 transform hover:scale-105 shadow-md"
-                    >
-                      Sign Up
-                      <ArrowRight className="h-5 w-5 ml-2" />
-                    </a>
+                    <Link
+                    to="/register"
+                    className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-transform duration-300 transform hover:scale-105 shadow-md"
+                      >
+                       Sign Up
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                  </Link>
                   </div>
                   
                 </motion.div>
