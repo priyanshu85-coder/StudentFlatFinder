@@ -59,8 +59,8 @@ npm run dev
 
 This will start:
 
-- Frontend on http://localhost:5173
-- Backend on http://localhost:5010
+- Frontend on https://studentflatfinder.vercel.app/
+- Backend on https://studentflatfinder.onrender.com
 
 ### Individual Services
 
