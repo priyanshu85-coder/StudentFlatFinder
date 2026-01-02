@@ -14,13 +14,17 @@ import adminRoutes from "./admin-routes.js";
 
 // Environment setup
 dotenv.config();
+console.log("JWT SECRET LOADED:", !!process.env.JWT_SECRET);
 
 console.log('MONGO_URI:', process.env.MONGO_URI);
-
+// for mongodb
 if (!process.env.MONGO_URI) {
   throw new Error('❌ MONGO_URI NOT LOADED');
 }
-
+// for jwt
+if (!process.env.JWT_SECRET) {
+  throw new Error('❌ JWT_SECRET NOT LOADED');
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -234,7 +238,7 @@ app.post('/api/auth/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, userType: user.userType },
-      process.env.JWT_SECRET || 'fallback_secret',
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -271,12 +275,7 @@ app.post('/api/auth/login', async (req, res) => {
     if (!user.isActive) {
       return res.status(400).json({ message: 'Account has been deactivated' });
     }
-   console.log("LOGIN ATTEMPT:", {
-  email,
-  enteredPassword: password,
-  dbHash: user.password,
-});
-
+   
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -286,7 +285,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, userType: user.userType },
-      process.env.JWT_SECRET || 'fallback_secret',
+      process.env.JWT_SECRET ,
       { expiresIn: '24h' }
     );
 
