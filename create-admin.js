@@ -6,11 +6,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Connect to MongoDB
-await mongoose.connect('mongodb+srv://8581priyanshu:Priyanshu%4012@cluster0.xy5w8.mongodb.net/flatfinder');
-/*async function connectDB() {
+
+async function connectDB() {
   await mongoose.connect(process.env.MONGO_URI);
 }
-await connectDB();*/
+await connectDB();
 
 
 
