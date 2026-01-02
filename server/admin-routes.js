@@ -1,7 +1,7 @@
 // Admin-only routes for creating additional admin users
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import User from './models/User.js';// Adjust path as needed
+
 
 const router = express.Router();
 
@@ -76,4 +76,4 @@ router.get('/admins', requireAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

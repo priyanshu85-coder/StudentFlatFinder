@@ -9,9 +9,18 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import multer from 'multer';
+import adminRoutes from "./admin-routes.js";
+
 
 // Environment setup
 dotenv.config();
+
+console.log('MONGO_URI:', process.env.MONGO_URI);
+
+if (!process.env.MONGO_URI) {
+  throw new Error('❌ MONGO_URI NOT LOADED');
+}
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,6 +32,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(join(__dirname, 'uploads')));
+app.use("/api/admin", adminRoutes);
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -57,8 +67,8 @@ const upload = multer({
 });
 
 // MongoDB Connection
-await mongoose.connect('mongodb+srv://8581priyanshu:Priyanshu%4012@cluster0.xy5w8.mongodb.net/flatfinder');
-
+await mongoose.connect(process.env.MONGO_URI);
+console.log("Mongodb Connected");
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -189,124 +199,13 @@ const requireAdmin = (req, res, next) => {
 
 // Routes
 
-// OTP Routes
-app.post('/api/auth/send-otp', async (req, res) => {
-  try {
-    const { phone } = req.body;
-
-    if (!phone) {
-      return res.status(400).json({ message: 'Phone number is required' });
-    }
-
-    // Clean phone number
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length !== 10) {
-      return res.status(400).json({ message: 'Please enter a valid 10-digit phone number' });
-    }
-
-    // Generate 6-digit OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Delete any existing OTP for this phone
-    await OTP.deleteMany({ phone: cleanPhone });
-
-    // Save new OTP
-    const otpDoc = new OTP({
-      phone: cleanPhone,
-      otp,
-      expiresAt
-    });
-    await otpDoc.save();
-
-    // In production, you would send SMS here
-    // For demo purposes, we'll log it to console
-    console.log(`OTP for ${cleanPhone}: ${otp}`);
-
-    res.json({ 
-      message: 'OTP sent successfully',
-      // In production, don't send OTP in response
-      otp: process.env.NODE_ENV === 'development' ? otp : undefined
-    });
-  } catch (error) {
-    console.error('Send OTP error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-app.post('/api/auth/verify-otp', async (req, res) => {
-  try {
-    const { phone, otp } = req.body;
-
-    if (!phone || !otp) {
-      return res.status(400).json({ message: 'Phone number and OTP are required' });
-    }
-
-    const cleanPhone = phone.replace(/\D/g, '');
-    
-    // Find OTP record
-    const otpDoc = await OTP.findOne({ 
-      phone: cleanPhone,
-      verified: false
-    });
-
-    if (!otpDoc) {
-      return res.status(400).json({ message: 'OTP not found or already verified' });
-    }
-
-    // Check if OTP expired
-    if (new Date() > otpDoc.expiresAt) {
-      await OTP.deleteOne({ _id: otpDoc._id });
-      return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
-    }
-
-    // Check attempts
-    if (otpDoc.attempts >= 3) {
-      await OTP.deleteOne({ _id: otpDoc._id });
-      return res.status(400).json({ message: 'Too many failed attempts. Please request a new OTP.' });
-    }
-
-    // Verify OTP
-    if (otpDoc.otp !== otp) {
-      otpDoc.attempts += 1;
-      await otpDoc.save();
-      return res.status(400).json({ 
-        message: `Invalid OTP. ${3 - otpDoc.attempts} attempts remaining.` 
-      });
-    }
-
-    // Mark as verified
-    otpDoc.verified = true;
-    await otpDoc.save();
-
-    res.json({ message: 'Phone number verified successfully' });
-  } catch (error) {
-    console.error('Verify OTP error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
 
 // Auth Routes
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { name, email, password, phone, userType, university, companyName, phoneVerified } = req.body;
+    const { name, email, password, phone, userType, university, companyName } = req.body;
 
-    // Check if phone is verified
-    if (!phoneVerified) {
-      return res.status(400).json({ message: 'Please verify your phone number first' });
-    }
-
-    const cleanPhone = phone.replace(/\D/g, '');
     
-    // Verify that OTP was completed for this phone
-    const verifiedOTP = await OTP.findOne({ 
-      phone: cleanPhone,
-      verified: true
-    });
-
-    if (!verifiedOTP) {
-      return res.status(400).json({ message: 'Phone number not verified' });
-    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -330,8 +229,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     await user.save();
 
-    // Clean up verified OTP
-    await OTP.deleteMany({ phone: cleanPhone });
+   
 
     // Generate JWT token
     const token = jwt.sign(
@@ -373,6 +271,11 @@ app.post('/api/auth/login', async (req, res) => {
     if (!user.isActive) {
       return res.status(400).json({ message: 'Account has been deactivated' });
     }
+   console.log("LOGIN ATTEMPT:", {
+  email,
+  enteredPassword: password,
+  dbHash: user.password,
+});
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -589,7 +492,6 @@ app.delete('/api/properties/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Rating Routes
 
 // Add or update rating
 app.post('/api/ratings', authenticateToken, async (req, res) => {
