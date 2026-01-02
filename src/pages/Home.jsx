@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import { Search, Users, Shield, ArrowRight, GraduationCap } from "lucide-react";
-import Background from '../images/Background.jpg';
+import Background from "../images/Background.jpg";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -46,35 +46,28 @@ const Home = () => {
     arrows: false,
     pauseOnHover: false,
   };
-  
+
   return (
-    
     <div className="min-h-[300px]">
       {/* Hero Slider Section */}
-         <div
-      style={{
-        backgroundImage: `url(${Background})`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        height: '50vh',
-      }}
-      className="flex items-center justify-center"
-    >
-      <h1 className="text-red-500 text-5xl font-bold shadow-lg">  </h1>
-    </div>
-       <section className="relative overflow-hidden"> 
-        
+      <div
+        style={{
+          backgroundImage: `url(${Background})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "50vh",
+        }}
+        className="flex items-center justify-center h-[30vh] sm:h-[40vh] md:h-[50vh]"
+      >
+        <h1 className="text-red-500 text-5xl font-bold shadow-lg"> </h1>
+      </div>
+      <section className="relative overflow-hidden">
         <Slider {...settings}>
-          
           {slides.map((slide, index) => (
-            
             <div
               key={index}
-              className="relative bg-gradient-to-br from-[#0f172a] via-[#334155] to-[#475569] text-white py-24"
+              className="relative bg-gradient-to-br from-[#0f172a] via-[#334155] to-[#475569] text-white py-14 sm:py-20"
             >
-
-
-
               <div className="absolute inset-0 bg-black opacity-30"></div>
               <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div
@@ -83,16 +76,18 @@ const Home = () => {
                   transition={{ duration: 0.8 }}
                   className="text-center"
                 >
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4">
                     {slide.title}
                     <span className="block text-yellow-300">
                       {slide.highlight}
                     </span>
                   </h1>
-                  <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+                  <p className="text-base sm:text-lg md:text-2xl mb-6 max-w-3xl mx-auto opacity-90">
                     {slide.description}
                   </p>
-                  <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"></div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link
                       to="/flats"
                       className="inline-flex items-center px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-transform duration-300 transform hover:scale-105 shadow-md"
@@ -101,24 +96,22 @@ const Home = () => {
                       Find Flats Now
                     </Link>
                     <Link
-                    to="/register"
-                    className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-transform duration-300 transform hover:scale-105 shadow-md"
-                      >
-                       Sign Up
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                  </Link>
+                      to="/register"
+                      className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-transform duration-300 transform hover:scale-105 shadow-md"
+                    >
+                      Sign Up
+                      <ArrowRight className="h-5 w-5 ml-2" />
+                    </Link>
                   </div>
-                  
                 </motion.div>
               </div>
             </div>
-            
           ))}
         </Slider>
-       </section> 
+      </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white"> 
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -184,10 +177,10 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-       </section>
+      </section>
 
       {/* CTA Section */}
-       <section className="py-20 bg-gradient-to-r from-purple-600 to-neutral-600 text-black"> 
+      <section className="py-20 bg-gradient-to-r from-purple-600 to-neutral-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.h2
             initial={{ opacity: 0, scale: 0.8 }}
